@@ -1,0 +1,54 @@
+// OrderController.java
+@RestController
+public class OrderController {
+    @Autowired
+    private OrderService orderService;
+
+    @PostMapping("/orders")
+    public ResponseEntity<String> createOrder(@RequestBody Order order) {
+        orderService.createOrder(order);
+        return ResponseEntity.ok("Order created successfully");
+    }
+
+    @GetMapping("/orders/{orderId}")
+    public ResponseEntity<Order> trackOrder(@PathVariable int orderId) {
+        Order order = orderService.trackOrder(orderId);
+        return ResponseEntity.ok(order);
+    }
+}
+
+// OrderService.java
+@Service
+public class OrderService {
+    @Autowired
+    private OrderRepository orderRepository;
+
+    public void createOrder(Order order) {
+        // Implement order creation logic
+        orderRepository.save(order);
+        // Trigger events for order creation
+    }
+
+    public Order trackOrder(int orderId) {
+        // Implement logic to retrieve order details
+        return orderRepository.findById(orderId).orElse(null);
+    }
+}
+
+// Order.java
+@Entity
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int orderId;
+    private int customerId;
+    private int productId;
+    private int quantity;
+    private String status;
+
+    // Getters, setters, and constructors
+}
+
+// OrderRepository.java
+public interface OrderRepository extends JpaRepository<Order, Integer> {
+}
